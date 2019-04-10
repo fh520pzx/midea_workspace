@@ -1,0 +1,84 @@
+def jd_chat_date(path):
+#    path='F:/京东数据/聊天记录_7a8411791f48471883c3dc3a84be9901.log'   
+    content=[]
+    
+    total=[]
+    fobj=open(path,'r',encoding='utf-8-sig')       
+    for eachline in fobj:                
+        content.append(eachline.strip()) 
+    print(len(content))
+    start_index=[]
+    end_index=[]
+    
+    for i in range(len(content)):
+        
+        if '以下为一通会话' in content[i]:            
+            start_index.append(i+1)
+        if '会话结束'  in content[i]:
+            
+            end_index.append(i)
+            
+    for i in range(len(start_index)):
+        ser=''
+        start=start_index[i]
+        end=end_index[i]
+        for i in range(start,end):
+            if '2015黎' not in content[i] and "美的美食家" not in content[i] and '2019-' in content[i]:
+                cus=content[i].split(' ')[0]
+                break
+        #或得客户和客服的名字
+        for i in range(start,end):
+            if '2019-' in content[i]:
+                if content[i].split(' ')[0] != cus:
+                    ser=content[i].split(' ')[0]
+                    
+            else:
+                pass
+        
+        for k in range(start,end): 
+            if '2019-' in content[k]:
+                current_person=content[k].split(' ')[0]
+                current_time=' '.join(content[k].split(' ')[1:])
+                pass
+            else:
+                sub=[]
+                if current_person== cus:
+                    
+                    sub.append(cus)
+                    sub.append(ser)
+                    sub.append('user')
+                    sub.append(cus)
+                    sub.append(content[k])
+                    sub.append(current_time)
+                    
+                else:
+                    
+                    sub.append(cus)
+                    sub.append(ser)
+                    sub.append('rep')
+                    sub.append(ser)
+                    sub.append(content[k])
+                    sub.append(current_time)
+                    
+                total.append(sub)
+                     
+    df=pd.DataFrame(total,columns=['tid', 'repid', 'type', 'from', 'content', 'chat_time'])
+#    df.to_excel('F:/京东数据/聊天记录_7a8411791f48471883c3dc3a84be9901.xlsx',encoding='utf-8-sig',index=False,header=True)   
+    df=df.astype('str')
+    return df
+
+def loop_file():
+    
+    df_list=[]
+    filepath='F:/京东数据/聊天数据/'
+    pathDir =  os.listdir(filepath)
+    for alldir in pathDir:
+        sub_df=jd_chat_date(filepath+alldir)
+        df_list.append(sub_df)
+    total_df=pd.concat(df_list)
+#    config.savetosql(total_df,'jd_chat_data')
+    print('aa')
+    total_df.to_excel('F:/京东数据/聊天记录.xlsx',encoding='utf-8-sig',index=False,header=True)     
+	
+	
+	
