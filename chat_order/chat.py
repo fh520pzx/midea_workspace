@@ -1,5 +1,9 @@
 import os
 import pandas as pd
+from sqlalchemy import  create_engine
+
+# engine = create_engine('mysql+pymysql://root:123456@localhost:3306/test?charset=utf8mb4')
+engine = create_engine('mysql+pymysql://root:123456@10.133.229.100:3306/recommend?charset=utf8mb4')
 def jd_chat_date(path):
     content = []
     total = []
@@ -68,22 +72,27 @@ def jd_chat_date(path):
 
 
 def loop_file():
-    df_list = []
     filepath = r'D:\MyData\fanghui3\Desktop\京东数据\聊天记录'
-    file = os.listdir(filepath)       #得到所有客户的文件夹
+    file = os.listdir(filepath)
     # print(file)
     for i in file:
+        # df_list = []
         path = os.path.join(filepath,i)
         pathDir = os.listdir(path)
         for j in pathDir:
+            df_list = []
             last_path = os.path.join(path,j)
             print(last_path)
             sub_df = jd_chat_date(last_path)
             sub_df['客服账号名称'] = i
-            df_list.append(sub_df)
+            # df_list.append(sub_df)
+            # total_df = pd.concat(df_list)
+            # total_df = pd.concat(sub_df)
+            pd.io.sql.to_sql(sub_df,'chat_data',con=engine,if_exists='append',index=False)
+            print("%s已经成功写入数据库"%j)
 
-    total_df = pd.concat(df_list)
-    total_df.to_excel('聊天记录.xlsx', encoding='utf-8-sig', index=False, header=True)
+        # total_df.to_excel('%s.xlsx'%i, encoding='utf-8-sig', index=False, header=True)
+
 
 if __name__ == '__main__':
     loop_file()
