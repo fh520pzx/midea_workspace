@@ -8,20 +8,26 @@ import numpy as np
 # df_new.to_excel(r'D:\MyData\fanghui3\Desktop\work4_4\new.xlsx',index=False)
 
 data1 = pd.read_excel(r'D:\MyData\fanghui3\Desktop\work4_4\recommend_re_map_new0401.xlsx')
+
 data2 = pd.read_excel(r'D:\MyData\fanghui3\Desktop\work4_4\new.xlsx')
 
-#形成3对1的字典
+#形成4对1的字典
 def creatdict(name):
     cat_id = np.array(name['Categoryid']).tolist()
     attr_n = np.array(name['attr_name']).tolist()
     value_n = np.array(name['value_name']).tolist()
-    flag = np.array(name['flag']).tolist()
+    flag1 = np.array(name['flag']).tolist()
+    flag = []
+    for i in flag1:
+        flag.append(str(i))
     attr_w = np.array(name['attr_word']).tolist()
     ls = []
     for i in range(len(attr_w)):
         ls.append(str(attr_w[i]).split('#'))               #分割attr_word中的单词
     list1 = list(zip(cat_id,attr_n,value_n,flag))
     dict1 = dict(zip(list1, ls))
+
+
     return dict1
 
 def dictmerged(dica,dicb):                                 #两个字典合并去重
@@ -59,6 +65,8 @@ if __name__ == '__main__':
     for i in list_values:
         list1.append('#'.join(i))
     dict = dict(zip(dict_new.keys(),list1))   #合并后的字典
+
+    # print(dict)
     list_last = []
     for i in dict.keys():
         value = dict[i]
@@ -71,7 +79,8 @@ if __name__ == '__main__':
     data3 = pd.read_excel(r'D:\MyData\fanghui3\Desktop\work4_4\categorynamemap.xlsx')
     category= data3.set_index('category_id').to_dict()['category_name'] #建立的字典
     df['Category'] = df['Categoryid'].map(category)
-    # df.to_excel(r'last.xlsx',index=False)
+
+
     att = df['attr_word']
     att = ['' if x == 'nan' else x for x in att]    #将attr_word中的nan替换成空字符
     df['attr_word'] = att
