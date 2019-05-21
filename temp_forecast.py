@@ -3,7 +3,6 @@ import numpy as np
 import datetime
 import time
 df = pd.read_csv(r'D:\MyData\fanghui3\Desktop\27487790780775.txt',delim_whitespace=True)
-# df = pd.read_csv(r'D:\MyData\fanghui3\Desktop\112.txt',delim_whitespace=True)
 df = df.sort_values('sampling_time')
 
 dtime = df['sampling_time'].astype('str')
@@ -76,8 +75,5 @@ for id in list_id:
     da.reset_index(inplace=True)
     da['appliance_id'].astype('str')
     da.drop(columns='time_flag',inplace=True)
-    da.to_excel('test.xlsx',index=False)
-
-
-
+    da.to_excel('forecast_1.xlsx',index=False)
 
